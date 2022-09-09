@@ -3,8 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"log"
+	"strings"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -15,46 +16,62 @@ const (
 	password = "1"
 )
 
-type EmployeS interface {
-	Connect()
-	Rigister()
-	Login()
-	
+var (
+	dbSql   = fmt.Sprintf("host=%s port=%d user=%s password=%s database=%s", host, port, user, password, database)
+	db, err = sql.Open("postgres", dbSql)
+)
+
+func Connect() {
+	if err != nil {
+		log.Fatal(err)
+	}
+	error := db.Ping()
+	if error != nil {
+		log.Fatal(error)
+	}
 }
 
 type Rigister struct {
-	f_name string
+	f_name   string
 	lastname string
-	parol int
-	age int
-	job string
+	job      string
+	parol    int
+	age      int
 }
 
-func (r *Rigister) rigister(name, lastname, job string, parol, age int) string {
-	query := `INSERT INTO rigister(f_name, lastname, parol, age, job)VALUES
-	('anvar', 'abdurashidov', '123', '21', 'developer')`
-	_, e := db.Exec(query)
+func (r *Rigister) rigister(f_name, lastname, job string, parol, age int) {
+	data := strings.Split((fmt.Sprintf("%s %s %s %d %d", f_name, lastname, job, parol, age)), " ")
+	query := `INSERT INTO rigister(f_name, lastname, job, parol, age)VALUES($1, $2, $3, $4, $5)`
+	_, e := db.Exec(query, data[0], data[1], data[2], data[3], data[4])
 	if e != nil {
 		panic(e)
 	}
 }
 
 func main() {
-	dbSql := fmt.Sprintf("host=%s port=%d user=%s password=%s database=%s", host, port, user, password, database)
-	db, err := sql.Open("postgres", dbSql)
-	if err != nil {
-		log.Fatal(err)
-	}
 	defer db.Close()
-	error := db.Ping()
-	if error != nil {
-		log.Fatal(error)
-	}
+	Connect()
+	var user = Rigister{}
+	var (
+		f_name string
+		lastname string
+		job string
+		parol int
+		age int
+	)
 
-	query := `INSERT INTO rigister(f_name, lastname, parol, age, job)VALUES
-	('anvar', 'abdurashidov', '123', '21', 'developer')`
-	_, e := db.Exec(query)
-	if e != nil {
-		panic(e)
-	}
+	fmt.Println("Enter first name")
+	fmt.Scan(&f_name)
+	fmt.Println("Enter last name")
+	fmt.Scan(&lastname)
+	fmt.Println("Enter job name")
+	fmt.Scan(&job)
+	fmt.Println("Enter parol name")
+	fmt.Scan(&parol)
+	fmt.Println("Enter age name")
+	fmt.Scan(&age)
+	
+	user.rigister(f_name, lastname, job, parol, age)
 }
+
+// f_name, lastname, job string, parol, age int

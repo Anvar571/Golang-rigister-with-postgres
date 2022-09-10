@@ -3,9 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"log"
+	"os"
 	"strings"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -49,8 +50,17 @@ func (r *Rigister) rigister(f_name, lastname, job string, parol, age int) {
 	}
 }
 
-func (r *Rigister) delete(f_name string) {
-	
+func (r *Rigister) deleteData(f_name string) {
+	if f_name == " " {
+		fmt.Println("hech qandaqa ma'lumot kelgani yuq")
+		os.Exit(1)
+	}
+	deleteQuery := `delete from rigister where f_name = $1`
+	err = db.QueryRow(deleteQuery).Scan(&f_name)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("delete successfull")
 }
 
 func (r *Rigister) show() {
@@ -113,6 +123,13 @@ func main() {
 			user.rigister(f_name, lastname, job, parol, age)
 		case 2:
 			user.show()
+		case 3:
+			var name string
+			fmt.Println("Enter delete name")
+			fmt.Scan(&name)
+			user.deleteData(name)
+		case 4:
+
 		}
 	}
 }

@@ -21,4 +21,4 @@
 3 - kiyin har bir rowni aylanib chiqiash kerak buladi row.Next() orqali va ma'lumotlarni row.Scan() orqali o'qib olinadi
 4 - Va oxirida har diom ochilgan databaseni yopib ketish kerak buladi defer row.Close() orqali
 
-<a src="http://go-database-sql.org/retrieving.html">To'liqroq ma'lumot uchun link</a>
+[To'liqroq ma'lumot uchun link](http://go-database-sql.org/retrieving.html)

@@ -49,6 +49,10 @@ func (r *Rigister) rigister(f_name, lastname, job string, parol, age int) {
 	}
 }
 
+func (r *Rigister) delete(f_name string) {
+	
+}
+
 func (r *Rigister) show() {
 	var (
 		f_name string

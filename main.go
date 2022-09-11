@@ -40,6 +40,7 @@ type Rigister struct {
 	age      int
 }
 
+// Create - Insert
 func (r *Rigister) rigister(f_name, lastname, job string, parol, age int) {
 	data := strings.Split((fmt.Sprintf("%s %s %s %d %d", f_name, lastname, job, parol, age)), " ")
 	query := `INSERT INTO rigister(f_name, lastname, job, parol, age)VALUES($1, $2, $3, $4, $5)`
@@ -49,27 +50,37 @@ func (r *Rigister) rigister(f_name, lastname, job string, parol, age int) {
 		panic(e)
 	}
 }
+// update
+func (r *Rigister) updateData(id string, f_name string, parol int) {
+	updateQuery := `UPDATE rigister SET f_name=$2, parol=$3 where id = $1`
+	_, err := db.Exec(updateQuery, id, f_name, parol)
+	if err != nil {
+		panic(err)
+	}
+}
 
+// delete
 func (r *Rigister) deleteData(f_name string) {
-	if f_name == " " {
-		fmt.Println("hech qandaqa ma'lumot kelgani yuq")
+	if len(f_name) < 3 {
+		fmt.Println("con not letters")
 		os.Exit(1)
 	}
 	deleteQuery := `delete from rigister where f_name = $1`
-	err = db.QueryRow(deleteQuery).Scan(&f_name)
+	_, err := db.Exec(deleteQuery, f_name)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 	fmt.Println("delete successfull")
 }
 
+// Read
 func (r *Rigister) show() {
 	var (
-		f_name string
+		f_name   string
 		lastname string
-		job string
-		parol int
-		age int
+		job      string
+		parol    int
+		age      int
 	)
 	readQuereData := `SELECT f_name, lastname, job, parol, age from rigister`
 	row, err := db.Query(readQuereData)
@@ -88,7 +99,7 @@ func (r *Rigister) show() {
 			fmt.Println("xatolik yuz berdi")
 		}
 	}
-	
+
 }
 
 func main() {
@@ -96,7 +107,7 @@ func main() {
 	Connect()
 	var user = Rigister{}
 	for {
-		fmt.Println("[1]- Register\n[2]- Show data")
+		fmt.Println("[1] - Register\n[2] - Show data\n[3] - Delete user\n[4] - Update user")
 		var son int
 		fmt.Scan(&son)
 		switch son {
@@ -108,7 +119,7 @@ func main() {
 				parol    int
 				age      int
 			)
-	
+
 			fmt.Println("Enter first name")
 			fmt.Scan(&f_name)
 			fmt.Println("Enter last name")
@@ -119,7 +130,7 @@ func main() {
 			fmt.Scanln(&parol)
 			fmt.Println("Enter age name")
 			fmt.Scanln(&age)
-	
+
 			user.rigister(f_name, lastname, job, parol, age)
 		case 2:
 			user.show()
@@ -129,7 +140,18 @@ func main() {
 			fmt.Scan(&name)
 			user.deleteData(name)
 		case 4:
-
+			var (
+				f_name string
+				parolQ int
+				id string
+			)
+			fmt.Println("Qaysi ididagi userni yangilamoqchisiz: ")
+			fmt.Scan(&id)
+			fmt.Println("Enter new f_name")
+			fmt.Scan(&f_name)
+			fmt.Println("Enter new parol")
+			fmt.Scan(&parolQ)
+			user.updateData(id, f_name, parolQ)
 		}
 	}
 }

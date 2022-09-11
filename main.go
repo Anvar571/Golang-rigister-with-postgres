@@ -50,6 +50,7 @@ func (r *Rigister) rigister(f_name, lastname, job string, parol, age int) {
 		panic(e)
 	}
 }
+
 // update
 func (r *Rigister) updateData(id string, f_name string, parol int) {
 	updateQuery := `UPDATE rigister SET f_name=$2, parol=$3 where id = $1`
@@ -99,7 +100,6 @@ func (r *Rigister) show() {
 			fmt.Println("xatolik yuz berdi")
 		}
 	}
-
 }
 
 func main() {
